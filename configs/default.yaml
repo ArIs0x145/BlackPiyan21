@@ -1,0 +1,36 @@
+---
+# BlackPiyan 默認配置文件
+
+# 遊戲配置
+game:
+  decks: 6                  # 使用的牌副數量
+  reshuffle_threshold: 0.4  # 當剩餘牌數低於此閾值時洗牌
+
+# 莊家配置
+dealer:
+  hit_until_value: 17       # 莊家補牌策略值 (小於此值就補牌)
+
+# 模擬配置
+simulation:
+  min_games_per_strategy: 1000  # 每種策略至少模擬的局數
+  total_min_games: 2000         # 總共至少模擬的局數
+  strategies:                   # 要測試的所有策略值
+    - 16
+    - 17
+    - 18
+
+# 日誌配置
+logging:
+  level: INFO                  # 日誌級別 (DEBUG, INFO, WARNING, ERROR)
+  file: logs/blackpiyan.log    # 日誌文件
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+
+# 結果輸出配置
+output:
+  data_dir: results/data        # 結果數據存儲目錄
+  charts_dir: results/charts    # 圖表輸出目錄 
+  
+# 字體配置
+font:
+  family: "Microsoft JhengHei"     # 中文顯示字體
+  fallback: "DejaVu Sans"       # 後備字體 

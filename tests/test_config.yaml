@@ -1,0 +1,30 @@
+---
+# BlackPiyan 測試配置文件
+
+# 遊戲配置
+game:
+  decks: 2                  # 使用的牌副數量
+  reshuffle_threshold: 0.4  # 當剩餘牌數低於此閾值時洗牌
+
+# 莊家配置
+dealer:
+  hit_until_value: 17       # 莊家補牌策略值 (小於此值就補牌)
+
+# 模擬配置
+simulation:
+  min_games_per_strategy: 100   # 每種策略至少模擬的局數
+  total_min_games: 200          # 總共至少模擬的局數
+  strategies:                   # 要測試的所有策略值
+    - 16
+    - 17
+
+# 日誌配置
+logging:
+  level: ERROR                 # 日誌級別
+  file: logs/test.log          # 日誌文件
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+
+# 結果輸出配置
+output:
+  data_dir: results/test/data     # 結果數據存儲目錄
+  charts_dir: results/test/charts # 圖表輸出目錄 
