@@ -151,9 +151,10 @@ class Visualizer:
             )
         
         # 添加中位數和平均值線
-        plt.axvline(x=df['hand_value'].tolist().index(int(stats['median'])), 
-                   color='green', linestyle='--', 
-                   label=f"中位數: {stats['median']}")
+        median_value = stats['median']
+        median_index = np.abs(np.array(df['hand_value']) - median_value).argmin()
+        plt.axvline(x=median_index, color='green', linestyle='--', 
+                   label=f"中位數: {median_value}")
         
         # 查找最接近平均值的索引
         mean_value = stats['mean']
