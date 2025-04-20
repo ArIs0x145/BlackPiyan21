@@ -1,16 +1,49 @@
-# BlackPiyan
+<div align="center">
+  <!-- 如需添加Logo，请将下面这行取消注释并指向您的Logo图片 -->
+  <!-- <img src="docs/images/logo.png" alt="BlackPiyan Logo" width="200"/> -->
+  <h1>BlackPiyan</h1>
+  <p>專業的21點(Blackjack)莊家策略模擬與分析工具</p>
+  
+  <p>
+    <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.8%2B-blue" alt="Python Version"></a>
+    <a href="./LICENSE"><img src="https://img.shields.io/badge/license-MIT-green" alt="License"></a>
+    <a href="https://github.com/CornHub114514/BlackPiyan/releases"><img src="https://img.shields.io/badge/version-0.1.0-orange" alt="Version"></a>
+  </p>
+</div>
 
-21點（Blackjack）遊戲中莊家補牌策略的模擬和分析工具
+## 📖 專案簡介
 
-## 功能特點
+BlackPiyan 是一個專門用於模擬和分析21點遊戲中不同莊家補牌策略的工具。通過模擬大量遊戲局數，收集和分析莊家在不同補牌策略（停牌點）下的點數分布、爆牌率等數據，幫助用戶理解不同策略的表現差異。
 
-- 模擬21點遊戲中莊家的不同補牌策略
-- 使用6副牌（312張）進行遊戲
-- 自動在剩餘牌數低於40%時洗牌
-- 收集並分析各種補牌策略下莊家的點數分布
-- 生成各種策略的比較圖表和統計數據
+### 🌟 功能特點
 
-## 安裝與使用
+- 🎮 模擬21點遊戲中莊家的不同補牌策略（16、17、18點等）
+- 🃏 支持自定義牌副數量（預設6副牌，312張）
+- 🔄 智能洗牌機制（剩餘牌數低於閾值時自動洗牌）
+- 📊 生成專業的視覺化分析圖表：
+  - 點數分布圖
+  - 爆牌率比較
+  - 平均點數比較
+  - 多策略綜合比較
+- 📱 完善的跨平台中文字體支持
+- ⚙️ 高度可配置的參數設置
+
+## 📷 效果展示
+
+<!-- 請在這裡添加您的圖表截圖，例如：-->
+<!--
+<div align="center">
+  <img src="docs/images/distribution.png" alt="點數分布" width="45%">
+  <img src="docs/images/comparison.png" alt="策略比較" width="45%">
+</div>
+-->
+
+## 🚀 安裝與使用
+
+### 環境需求
+
+- Python 3.8 或更高版本
+- 依賴庫: 見 `requirements.txt`
 
 ### 安裝依賴
 
@@ -24,49 +57,80 @@ pip install -r requirements.txt
 python main.py
 ```
 
-## 配置說明
+若需使用自定義配置：
+
+```bash
+python main.py --config configs/my_config.yaml
+```
+
+## ⚙️ 配置說明
 
 配置文件位於 `configs/default.yaml`，可自定義以下設置：
 
-- 使用的牌副數量
-- 洗牌閾值
-- 要測試的莊家補牌策略
-- 每種策略的模擬局數
-- 日誌設置
-- 結果輸出路徑
-
-## 配置示例
-
 ```yaml
+# 遊戲配置
 game:
   decks: 6                  # 使用的牌副數量
   reshuffle_threshold: 0.4  # 當剩餘牌數低於此閾值時洗牌
 
+# 莊家配置
 dealer:
   hit_until_value: 17       # 莊家補牌策略值 (小於此值就補牌)
 
+# 模擬配置
 simulation:
   min_games_per_strategy: 1000  # 每種策略至少模擬的局數
   strategies:                   # 要測試的所有策略值
     - 16
     - 17
     - 18
+
+# 字體配置
+font:
+  family: "Microsoft JhengHei"  # 中文顯示字體
+  fallback: "DejaVu Sans"       # 後備字體
 ```
 
-## 輸出結果
+更多配置說明請參閱 [配置文檔](docs/configuration.md)。
+
+## 📊 輸出結果
 
 模擬結果將以兩種形式呈現：
 
 1. 控制台和日誌文件中的統計信息
-2. `results/charts/` 目錄下的圖表:
-   - 每種策略的點數分布圖
+2. `results/charts/` 目錄下的圖表:  
+   - 每種策略的點數分布圖  
    - 不同策略的比較圖
 
-## 開發者
+## 📂 專案結構
 
-BlackPiyan Team 
+```
+blackpiyan/             # 主程式碼目錄
+├── analysis/           # 數據分析模塊
+├── config/             # 配置管理模塊
+├── game/               # 遊戲邏輯模塊
+├── model/              # 數據模型
+├── simulation/         # 模擬引擎
+├── utils/              # 實用工具
+└── visualization/      # 可視化模塊
 
-## 運行測試
+configs/                # 配置文件目錄
+docs/                   # 文檔目錄
+results/                # 結果輸出目錄
+tests/                  # 測試目錄
+```
+
+## 📚 文檔
+
+詳細文檔請參閱 [文檔目錄](docs/README.md):
+
+- [使用指南](docs/usage.md)
+- [安裝指南](docs/installation.md)
+- [API 參考](docs/api_reference.md)
+- [跨平台字體支持](docs/font_support.md)
+- [架構設計](docs/architecture.md)
+
+## 🧪 運行測試
 
 BlackPiyan 提供了完整的測試套件：
 
@@ -82,7 +146,14 @@ python -m unittest tests.test_simulation
 python -m unittest tests.test_model.TestCard
 ```
 
-## 系統需求
+## 🤝 貢獻指南
 
-- Python 3.8 或更高版本
-- 依賴庫: 見 requirements.txt 
+歡迎任何形式的貢獻！如果您想為 BlackPiyan 做出貢獻，請參閱我們的 [貢獻指南](docs/contributing.md)。
+
+## 📄 許可證
+
+本項目採用 MIT 許可證 - 詳情請參閱 [LICENSE](LICENSE) 文件。
+
+## 👥 開發團隊
+
+BlackPiyan Team 
