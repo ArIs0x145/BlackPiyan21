@@ -10,11 +10,11 @@ setup(
     name="blackpiyan",
     version="0.1.0",
     author="BlackPiyan Team",
-    author_email="example@example.com",
+    author_email="aris0x145@gmail.com",
     description="模擬21點遊戲中莊家補牌策略的工具",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/yourusername/blackpiyan",
+    url="https://github.com/CornHub114514/BlackPiyan",
     packages=find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
