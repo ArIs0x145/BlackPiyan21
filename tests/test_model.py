@@ -146,18 +146,60 @@ class TestDealer(unittest.TestCase):
         self.assertFalse(dealer.should_hit(18))
     
     def test_calculate_hand_value(self):
-        """測試手牌點數計算"""
+        """測試手牌點數計算 (包含 Ace 動態計算)"""
         dealer = Dealer()
         
+        # 基本測試案例
         # 空手牌應該為0點
         self.assertEqual(dealer.calculate_hand_value([]), 0)
         
-        # A + 10 = 11點
-        hand = [Card(1, "♥"), Card(10, "♠")]
+        # 一般牌點數測試
+        hand = [Card(5, "♥"), Card(10, "♠")]  # 5 + 10 = 15
+        self.assertEqual(dealer.calculate_hand_value(hand), 15)
+        
+        # 帶人像牌測試
+        hand = [Card(5, "♥"), Card(11, "♠")]  # 5 + 10(J) = 15
+        self.assertEqual(dealer.calculate_hand_value(hand), 15)
+        
+        # Ace 測試案例
+        # Ace 計為 11 點的情況: A + 10 = 21
+        hand = [Card(1, "♥"), Card(10, "♠")]  # A(11) + 10 = 21
+        self.assertEqual(dealer.calculate_hand_value(hand), 21)
+        
+        # Ace 計為 11 點的情況: A + 9 = 20
+        hand = [Card(1, "♥"), Card(9, "♠")]  # A(11) + 9 = 20
+        self.assertEqual(dealer.calculate_hand_value(hand), 20)
+        
+        # Ace 計為 1 點的情況 (避免爆牌): A + 10 + J = 21
+        hand = [Card(1, "♥"), Card(10, "♠"), Card(11, "♦")]  # A(1) + 10 + 10(J) = 21
+        self.assertEqual(dealer.calculate_hand_value(hand), 21)
+        
+        # 單張 Ace 應計為 11 點
+        hand = [Card(1, "♥")]  # A = 11
         self.assertEqual(dealer.calculate_hand_value(hand), 11)
         
-        # A + J + Q = 21點
-        hand = [Card(1, "♥"), Card(11, "♠"), Card(12, "♦")]
+        # 多張 Ace 的情況: A + A = 12 (一張為11, 一張為1)
+        hand = [Card(1, "♥"), Card(1, "♠")]  # A(11) + A(1) = 12
+        self.assertEqual(dealer.calculate_hand_value(hand), 12)
+        
+        # 多張 Ace 的情況: A + A + 9 = 21 (一張為11, 一張為1)
+        hand = [Card(1, "♥"), Card(1, "♠"), Card(9, "♦")]  # A(11) + A(1) + 9 = 21
+        self.assertEqual(dealer.calculate_hand_value(hand), 21)
+        
+        # 多張 Ace 的情況: A + A + A = 13 (一張為11, 兩張為1)
+        hand = [Card(1, "♥"), Card(1, "♠"), Card(1, "♦")]  # A(11) + A(1) + A(1) = 13
+        self.assertEqual(dealer.calculate_hand_value(hand), 13)
+        
+        # 多張 Ace 的情況: A + A + 10 = 12 (都為1的情況)
+        hand = [Card(1, "♥"), Card(1, "♠"), Card(10, "♦"), Card(10, "♣")]  # A(1) + A(1) + 10 + 10 = 22 -> 爆牌情況
+        self.assertEqual(dealer.calculate_hand_value(hand), 22)
+        
+        # 邊界情況: A + 10 + 10 = 21 (Ace 作為 1 計算)
+        hand = [Card(1, "♥"), Card(10, "♠"), Card(10, "♦")]
+        self.assertEqual(dealer.calculate_hand_value(hand), 21)
+        
+        # 邊界情況: A + 9 + A = 21 (一張 Ace 作為 11，一張作為 1)
+        hand = [Card(1, "♥"), Card(9, "♠"), Card(1, "♦")]
         self.assertEqual(dealer.calculate_hand_value(hand), 21)
     
     def test_is_busted(self):

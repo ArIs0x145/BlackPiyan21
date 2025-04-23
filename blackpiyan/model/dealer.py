@@ -4,7 +4,18 @@ from blackpiyan.model.card import Card
 from blackpiyan.model.deck import Deck
 
 class Dealer:
-    """表示21點遊戲中的莊家"""
+    """
+    表示21點遊戲中的莊家
+    
+    當前已實現標準21點規則，包括：
+    - 完整支持 Ace 點數動態計算 (1 或 11)
+    - 實現莊家的標準策略（小於特定點數時補牌）
+    
+    未來可進一步擴展：
+    - 支持玩家角色與決策
+    - 添加對牌型(如黑傑克、對子等)的判斷
+    - 實現更複雜的策略和遊戲規則
+    """
     
     def __init__(self, hit_until_value: int = 17):
         """
@@ -42,13 +53,30 @@ class Dealer:
         """
         計算手牌總點數
         
+        實現標準21點規則中 Ace 可以為 1 或 11 點的邏輯。
+        將 Ace 優先視為 11 點，但如果總點數超過 21 點，則將 Ace 視為 1 點。
+        
         Args:
             hand: 手牌列表
             
         Returns:
-            手牌總點數
+            手牌最優總點數
         """
-        total = sum(card.blackjack_value for card in hand)
+        # 初始計算，將所有牌按最小值計算
+        min_total = sum(card.blackjack_value for card in hand)
+        
+        # 計算牌中的 Ace 數量
+        aces = sum(1 for card in hand if card.value == 1)
+        
+        # 嘗試將部分 Ace 計為 11 點，但不超過 21 點
+        total = min_total
+        for _ in range(aces):
+            # 嘗試將一個 Ace 從 1 點變為 11 點（增加 10 點）
+            if total + 10 <= 21:
+                total += 10
+            else:
+                break
+                
         return total
     
     def play_hand(self, deck: Deck) -> Tuple[List[Card], int]:

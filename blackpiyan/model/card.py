@@ -29,11 +29,16 @@ class Card:
     def blackjack_value(self) -> int:
         """
         返回這張牌在21點遊戲中的點數
-        A算1點，J/Q/K算10點
+        
+        在標準21點規則中，J/Q/K 算10點，Ace 預設計為 1 點。
+        在計算總點數時，應該動態決定 Ace 是計為 1 點還是 11 點。
+        
+        Returns:
+            牌的點數值（Ace 為 1，J/Q/K 為 10，其他按面值）
         """
         if self.value == 1:  # Ace
-            return 1
-        elif self.value >= 11:  # Face cards
+            return 1  # Ace 預設為 1 點，在計算總點數時再決定是否算為 11 點
+        elif self.value >= 11:  # Face cards (J/Q/K)
             return 10
         else:
             return self.value

@@ -18,6 +18,13 @@ simulation:
     - 16
     - 17
     - 18
+  # 實時更新配置
+  realtime_update:
+    enabled: true               # 是否啟用實時更新
+    update_interval: 100        # 每多少局更新一次圖表 (較小的值更新更頻繁)
+    min_update_interval: 50     # 最小更新間隔 (局數)
+    max_update_interval: 500    # 最大更新間隔 (局數)
+    auto_adjust: true           # 是否根據總局數自動調整更新間隔
 
 # 日誌配置
 logging:

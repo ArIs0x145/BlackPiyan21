@@ -1,4 +1,4 @@
-# BlackPiyan API 參考文檔
+# BlackPiyan API 參考文檔 (v1.0.0)
 
 本文檔提供 BlackPiyan 各模塊的詳細 API 說明，幫助開發者理解和擴展系統功能。
 
@@ -256,6 +256,39 @@ def is_busted(self, hand_value: int) -> bool
 
 **返回**:
 - 是否爆牌
+
+```python
+def calculate_dynamic_hand_value(self, hand: List[Card]) -> int
+```
+計算手牌總點數，動態處理 Ace 點數。
+
+**參數**:
+- `hand`: 手牌列表
+
+**返回**:
+- 手牌最優總點數（Ace 可為 1 或 11，以獲得最佳點數且不超過 21 點）
+
+```python
+def should_hit(self, hand_value: int) -> bool
+```
+決定是否需要補牌。
+
+**參數**:
+- `hand_value`: 當前手牌點數
+
+**返回**:
+- 是否應該補牌
+
+```python
+def calculate_hand_value(self, hand: List[Card]) -> int
+```
+計算手牌總點數。
+
+**參數**:
+- `hand`: 手牌列表
+
+**返回**:
+- 手牌總點數
 
 ---
 

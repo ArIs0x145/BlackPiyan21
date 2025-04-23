@@ -1,24 +1,26 @@
 from typing import Dict, Any, List, Optional
 import numpy as np
 import pandas as pd
+import logging
 
 class Analyzer:
     """分析器類，用於分析21點模擬結果"""
     
-    def __init__(self, results: Dict[int, List[Dict[str, Any]]]):
+    def __init__(self, results: Optional[Dict[int, List[Dict[str, Any]]]] = None):
         """
         初始化分析器
         
         Args:
             results: 模擬結果字典，鍵為策略值，值為該策略的結果列表
         """
-        self.results = results
-        self.strategies = list(results.keys())
+        self.results = results if results is not None else {}
+        self.strategies = list(self.results.keys()) if self.results else []
         
         # 將結果轉換為DataFrame以便分析
         self.dataframes = {}
-        for strategy, strategy_results in results.items():
-            self.dataframes[strategy] = pd.DataFrame(strategy_results)
+        if self.results:
+            for strategy, strategy_results in self.results.items():
+                self.dataframes[strategy] = pd.DataFrame(strategy_results)
     
     def calculate_statistics(self, strategy: Optional[int] = None) -> Dict[str, Any]:
         """
@@ -33,10 +35,39 @@ class Analyzer:
         if strategy is not None:
             # 分析單一策略
             if strategy not in self.dataframes:
-                raise ValueError(f"No results found for strategy {strategy}")
+                logging.warning(f"無結果找到（策略 {strategy}）")
+                # 返回默認值
+                return {
+                    'count': 0,
+                    'bust_count': 0,
+                    'bust_rate': 0.0,
+                    'mean': 0.0,
+                    'median': 0.0,
+                    'std': 0.0,
+                    'min': 0,
+                    'max': 0,
+                    'percentile_25': 0.0,
+                    'percentile_75': 0.0,
+                    'value_counts': {}
+                }
             df = self.dataframes[strategy]
         else:
             # 分析所有策略
+            if not self.dataframes:
+                logging.warning("無結果數據可分析")
+                return {
+                    'count': 0,
+                    'bust_count': 0,
+                    'bust_rate': 0.0,
+                    'mean': 0.0,
+                    'median': 0.0,
+                    'std': 0.0,
+                    'min': 0,
+                    'max': 0,
+                    'percentile_25': 0.0,
+                    'percentile_75': 0.0,
+                    'value_counts': {}
+                }
             df = pd.concat(list(self.dataframes.values()))
         
         # 計算統計數據
@@ -66,10 +97,11 @@ class Analyzer:
             strategy: 要分析的策略
             
         Returns:
-            點數到局數的映射字典
+            點數到局數的映射字典，若策略不存在則返回空字典
         """
         if strategy not in self.dataframes:
-            raise ValueError(f"No results found for strategy {strategy}")
+            logging.warning(f"無結果找到（策略 {strategy}）")
+            return {}
         
         df = self.dataframes[strategy]
         return df['dealer_hand_value'].value_counts().sort_index().to_dict()
@@ -93,6 +125,10 @@ class Analyzer:
         Returns:
             包含各策略關鍵指標的DataFrame
         """
+        if not self.strategies:
+            logging.warning("沒有策略可比較")
+            return pd.DataFrame()
+            
         comparison = []
         for strategy in self.strategies:
             stats = self.calculate_statistics(strategy)
