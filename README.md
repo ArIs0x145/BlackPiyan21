@@ -147,6 +147,17 @@ blackpiyan/             # 主程式碼目錄
 ├── utils/              # 實用工具
 └── visualization/      # 可視化模塊
 
+
+gui/                     # GUI目錄
+├── __init__.py
+├── main_window.py       # 主窗口邏輯實現
+├── ui_main_window.py    # 由 .ui 文件自動生成
+├── main_window.ui       # Qt Designer 設計文件
+├── mpl_canvas.py        # Matplotlib 嵌入控件
+├── worker.py            # QThread 工作線程類
+└── resources/           # 圖標等資源 
+    └── icons/
+
 configs/                # 配置文件目錄
 docs/                   # 文檔目錄
 results/                # 結果輸出目錄
