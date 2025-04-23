@@ -76,6 +76,26 @@ python main.py
 python main.py --config configs/my_config.yaml
 ```
 
+### 運行GUI
+
+```bash
+python run_gui.py
+```
+
+### 構建可執行檔
+
+要將GUI打包為獨立的可執行檔案：
+
+```bash
+# 先安裝PyInstaller
+pip install pyinstaller
+
+# 運行打包腳本
+python build_exe.py
+```
+
+打包後的可執行檔位於 `dist/BlackPiyan` 目錄下。
+
 ## ⚙️ 配置說明
 
 配置文件位於 `configs/default.yaml`，可自定義以下設置：
@@ -170,3 +190,5 @@ python -m unittest tests.test_model.TestCard
 ## 👥 開發團隊
 
 BlackPiyan Team 
+[ArIs0x145](https://github.com/ArIs0x145)
+[love2004](https://github.com/love2004)
