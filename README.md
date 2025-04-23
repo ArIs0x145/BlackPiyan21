@@ -7,7 +7,7 @@
   <p>
     <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.8%2B-blue" alt="Python Version"></a>
     <a href="./LICENSE"><img src="https://img.shields.io/badge/license-MIT-green" alt="License"></a>
-    <a href="https://github.com/ArIs0x145/BlackPiyan/releases"><img src="https://img.shields.io/badge/version-1.0.0-orange" alt="Version"></a>
+    <a href="https://github.com/ArIs0x145/BlackPiyan21/releases"><img src="https://img.shields.io/badge/version-1.0.0-orange" alt="Version"></a>
   </p>
 </div>
 
