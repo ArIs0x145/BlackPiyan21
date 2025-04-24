@@ -22,6 +22,7 @@ from .worker import SimulationWorker
 # 導入BlackPiyan核心類
 from blackpiyan.config.config_manager import ConfigManager
 from blackpiyan.analysis.analyzer import Analyzer
+from blackpiyan.utils.font_manager import FontManager
 
 # --- 日誌處理器 ---
 class QtLogHandler(logging.Handler, QObject):
@@ -56,6 +57,23 @@ class BlackPiyanGUI(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
+        # 加載配置
+        try:
+            self.config_manager = ConfigManager('configs/default.yaml')
+            self.config = self.config_manager.get_config()
+        except Exception as e:
+            QMessageBox.critical(self, "配置加載錯誤", f"無法加載配置文件: {e}")
+            self.config = {'simulation': {'min_games_per_strategy': 1000, 'strategies': [16, 17, 18]},
+                           'game': {'decks': 6, 'reshuffle_threshold': 0.4}}
+
+        # 初始化字體管理器
+        self.font_manager = FontManager()
+        
+        # 設置應用程序字體
+        app = QApplication.instance()
+        if app:
+            app.setFont(self.font_manager.get_qt_font())
+
         # 設置應用程序圖標
         try:
             # 使用絕對路徑獲取圖標
@@ -69,15 +87,6 @@ class BlackPiyanGUI(QMainWindow):
                 logging.warning(f"圖標文件不存在: {icon_path}")
         except Exception as e:
             logging.warning(f"設置應用程序圖標時出錯: {str(e)}")
-
-        # 加載配置
-        try:
-            self.config_manager = ConfigManager('configs/default.yaml')
-            self.config = self.config_manager.get_config()
-        except Exception as e:
-            QMessageBox.critical(self, "配置加載錯誤", f"無法加載配置文件: {e}")
-            self.config = {'simulation': {'min_games_per_strategy': 1000, 'strategies': [16, 17, 18]},
-                           'game': {'decks': 6, 'reshuffle_threshold': 0.4}}
 
         # 初始化UI組件
         self.setup_matplotlib_widgets()
@@ -103,6 +112,9 @@ class BlackPiyanGUI(QMainWindow):
 
     def setup_matplotlib_widgets(self):
         """設置 Matplotlib 圖表控件"""
+        # 配置 Matplotlib 字體
+        self.font_manager.configure_matplotlib()
+        
         # 為分佈圖創建Canvas
         self.dist_canvas = MplCanvas(self.ui.distributionPlotWidget, width=5, height=4, dpi=100)
         dist_layout = QtWidgets.QVBoxLayout()
