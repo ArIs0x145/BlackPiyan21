@@ -11,7 +11,7 @@ import os
 import platform
 from PySide6.QtWidgets import QApplication
 from PySide6.QtGui import QIcon
-from gui.main_window import BlackPiyanGUI
+from blackpiyan.gui.main_window import BlackPiyanGUI
 
 def setup_windows_taskbar_icon():
     """在 Windows 上設置任務欄圖標"""
@@ -40,7 +40,7 @@ if __name__ == "__main__":
     app.setApplicationDisplayName(" 21點莊家策略分析")  # 設置顯示名稱
     
     # 設置應用程序圖標
-    icon_path = os.path.join(os.path.dirname(__file__), "gui", "resources", "icons", "piyan.ico")
+    icon_path = os.path.join(os.path.dirname(__file__), "blackpiyan", "gui", "resources", "icons", "piyan.ico")
     if os.path.exists(icon_path):
         app_icon = QIcon(icon_path)
         app.setWindowIcon(app_icon)
