@@ -43,13 +43,17 @@ BlackPiyan 是一個專門用於模擬和分析21點遊戲中不同莊家補牌�
 
 ## 📷 效果展示
 
-<!-- 請在這裡添加您的圖表截圖，例如：-->
-<!--
 <div align="center">
-  <img src="docs/images/distribution.png" alt="點數分布" width="45%">
-  <img src="docs/images/comparison.png" alt="策略比較" width="45%">
+  <img src="docs/imgs/app.png" alt="應用程式界面" width="80%">
+  <p>BlackPiyan圖形用戶界面</p>
 </div>
--->
+
+<div align="center">
+  <img src="docs/imgs/s16.png" alt="策略16點數分布" width="45%">
+  <img src="docs/imgs/s17.png" alt="策略17點數分布" width="45%">
+  <img src="docs/imgs/s18.png" alt="策略18點數分布" width="45%">
+  <img src="docs/imgs/total.png" alt="策略比較" width="45%">
+</div>
 
 ## 🚀 安裝與使用
 
