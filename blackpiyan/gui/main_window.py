@@ -66,8 +66,12 @@ class BlackPiyanGUI(QMainWindow):
             self.config = {'simulation': {'min_games_per_strategy': 1000, 'strategies': [16, 17, 18]},
                            'game': {'decks': 6, 'reshuffle_threshold': 0.4}}
 
-        # 初始化字體管理器
-        self.font_manager = FontManager()
+        # 初始化字體管理器，傳遞配置
+        self.font_manager = FontManager(self.config)
+        
+        # 記錄所選用的字體
+        self.font_family = self.font_manager.qt_font_family
+        logging.info(f"GUI 使用字體: {self.font_family}")
         
         # 設置應用程序字體
         app = QApplication.instance()

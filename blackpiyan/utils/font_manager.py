@@ -41,21 +41,35 @@ class FontManager:
     # 通用備用字體
     FALLBACK_FONTS = ['sans-serif']
     
-    def __init__(self):
-        """初始化字體管理器"""
+    def __init__(self, config=None):
+        """
+        初始化字體管理器
+        
+        Args:
+            config: 配置字典，如果提供，將嘗試從中讀取字體配置
+        """
         self.system = platform.system()
         self._qt_fonts: Dict[str, QFont] = {}
         self._mpl_fonts: Dict[str, str] = {}
+        
+        # 從配置中讀取字體設定
+        self.config_font = None
+        self.config_fallback = None
+        
+        if config and 'font' in config:
+            if 'family' in config['font']:
+                self.config_font = config['font']['family']
+                logger.info(f"從配置檔案讀取主要字體: {self.config_font}")
+            
+            if 'fallback' in config['font']:
+                self.config_fallback = config['font']['fallback']
+                logger.info(f"從配置檔案讀取後備字體: {self.config_fallback}")
         
         # 初始化字體
         self._initialize_fonts()
     
     def _initialize_fonts(self) -> None:
         """初始化字體系統，檢測可用字體"""
-        # 構建字體優先級列表
-        priority_fonts = self.SYSTEM_FONTS.get(self.system, [])
-        priority_fonts.extend(self.FALLBACK_FONTS)
-        
         # 獲取系統可用字體
         qt_fonts = set(QFontDatabase().families())
         mpl_fonts = set(f.name for f in mpl_fm.fontManager.ttflist)
@@ -64,6 +78,20 @@ class FontManager:
         logger.debug(f"系統: {self.system}")
         logger.debug(f"Qt可用字體數量: {len(qt_fonts)}")
         logger.debug(f"Matplotlib可用字體數量: {len(mpl_fonts)}")
+        
+        # 構建字體優先級列表
+        priority_fonts = []
+        
+        # 首先嘗試配置中指定的字體
+        if self.config_font:
+            priority_fonts.append(self.config_font)
+        if self.config_fallback:
+            priority_fonts.append(self.config_fallback)
+            
+        # 然後加入系統默認字體
+        system_fonts = self.SYSTEM_FONTS.get(self.system, [])
+        priority_fonts.extend(system_fonts)
+        priority_fonts.extend(self.FALLBACK_FONTS)
         
         # 選擇第一個可用的字體
         self.primary_font = self._find_first_available_font(priority_fonts, qt_fonts)
@@ -76,9 +104,14 @@ class FontManager:
         if not self.primary_mpl_font:
             logger.warning("無法找到合適的Matplotlib字體，將使用系統默認字體")
             self.primary_mpl_font = 'sans-serif'
-            
+        
+        # 記錄選擇的字體    
         logger.info(f"選擇的Qt主要字體: {self.primary_font}")
         logger.info(f"選擇的Matplotlib主要字體: {self.primary_mpl_font}")
+        
+        # 如果配置中指定了字體，但未使用，記錄警告
+        if self.config_font and self.primary_font != self.config_font:
+            logger.warning(f"配置的字體 '{self.config_font}' 不可用，使用 '{self.primary_font}' 代替")
     
     def _find_first_available_font(self, priority_list: List[str], available_fonts: set) -> str:
         """從優先級列表中找出第一個可用的字體"""
@@ -150,4 +183,4 @@ class FontManager:
             'system': self.system,
             'qt_font': self.primary_font,
             'mpl_font': self.primary_mpl_font
-        } 
+        }

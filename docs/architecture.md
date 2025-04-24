@@ -40,6 +40,7 @@ BlackPiyan 採用模塊化架構，遵循單一職責原則，分離了遊戲邏
 3. **模擬引擎**：基於遊戲邏輯執行大批量模擬
 4. **數據分析**：處理和分析模擬結果數據
 5. **可視化**：生成各種圖表以可視化分析結果
+6. **GUI 界面**：提供圖形用戶界面操作
 
 ## 目錄結構
 
@@ -68,10 +69,21 @@ blackpiyan/
 │   └── simulator.py           # 模擬器實現
 ├── utils/                     # 實用工具
 │   ├── __init__.py
-│   └── logger.py              # 日誌工具
+│   ├── logger.py              # 日誌工具
+│   └── font_manager.py        # 字體管理工具
 └── visualization/             # 可視化模塊
     ├── __init__.py
     └── visualizer.py          # 視覺化器實現
+
+gui/                          # GUI目錄
+├── __init__.py
+├── main_window.py            # 主窗口邏輯實現
+├── ui_main_window.py         # 由 .ui 文件自動生成
+├── main_window.ui            # Qt Designer 設計文件
+├── mpl_canvas.py             # Matplotlib 嵌入控件
+├── worker.py                 # QThread 工作線程類
+└── resources/                # 圖標等資源 
+    └── icons/
 
 configs/                       # 配置文件目錄
 ├── default.yaml               # 默認配置
@@ -80,16 +92,26 @@ docs/                          # 文檔目錄
 ├── README.md                  # 文檔索引
 ├── api_reference.md           # API 參考
 ├── architecture.md            # 架構設計 (本文檔)
-└── ...                        # 其他文檔
+├── configuration.md           # 配置說明
+├── font_support.md            # 跨平台字體支持
+├── installation.md            # 安裝指南
+├── usage.md                   # 使用指南
+└── imgs/                      # 文檔圖片目錄
 
 results/                       # 輸出結果目錄
 ├── charts/                    # 圖表輸出目錄
-└── data/                      # 數據輸出目錄
+└── font_tests/                # 字體測試結果目錄
 
 tests/                         # 測試目錄
-└── ...                        # 測試文件
+├── __init__.py
+├── test_model.py
+├── test_simulation.py
+├── test_font.py
+└── test_cross_platform_font.py
 
 main.py                        # 應用程序入口
+run_gui.py                     # GUI 程序入口
+build_exe.py                   # 構建可執行檔腳本
 setup.py                       # 安裝腳本
 requirements.txt               # 依賴項列表
 .gitignore                     # Git 忽略文件
@@ -131,6 +153,7 @@ requirements.txt               # 依賴項列表
 - 支持多策略對比模擬
 - 可配置模擬局數
 - 收集詳細的遊戲結果數據
+- 支持實時更新圖表
 
 ### 數據分析 (analysis)
 
@@ -155,8 +178,19 @@ requirements.txt               # 依賴項列表
 實用工具模塊提供跨模塊共享的功能：
 
 - 日誌記錄
+- 字體管理
 - 性能監控
 - 時間測量
+
+### GUI 界面 (gui)
+
+GUI 模塊提供圖形用戶界面，使用 PySide6 開發：
+
+- 主窗口設計與實現
+- 參數設置界面
+- 實時更新圖表
+- 線程管理
+- 使用者友好的交互設計
 
 ## 數據流
 
@@ -175,6 +209,10 @@ BlackPiyan 的數據流如下：
    - 使用分析結果生成圖表
    - 根據配置應用字體和樣式
    - 保存圖表到文件
+5. **用戶界面**：
+   - 顯示圖表和分析結果
+   - 接收用戶輸入
+   - 觸發新的模擬或分析
 
 ## 設計模式
 
@@ -185,6 +223,7 @@ BlackPiyan 運用了以下設計模式：
 3. **策略模式**：莊家的補牌策略可以靈活配置和切換
 4. **工廠模式**：在某些地方使用工廠方法創建對象
 5. **門面模式**：高層模塊提供簡化的接口隱藏底層複雜性
+6. **觀察者模式**：在GUI中實現實時更新和數據變化通知
 
 ## 擴展指南
 
@@ -214,4 +253,4 @@ BlackPiyan 運用了以下設計模式：
 
 ---
 
-本架構文檔旨在提供 BlackPiyan 項目的高層次概述。更多技術細節請參考 [API 參考文檔](./api_reference.md) 和代碼註釋。 
+本架構文檔旨在提供 BlackPiyan 項目的高層次概述。更多技術細節請參考 [API 參考文檔](./api_reference.md) 和代碼註釋。

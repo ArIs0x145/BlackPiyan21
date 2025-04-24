@@ -28,9 +28,13 @@ class Visualizer:
         self.analyzer = analyzer
         self.config = config or {}
         
-        # 初始化字體管理器
-        self.font_manager = FontManager()
+        # 初始化字體管理器，並傳遞配置
+        self.font_manager = FontManager(config)
         self.font_manager.configure_matplotlib()
+        
+        # 記錄使用的字體
+        self.font_family = self.font_manager.mpl_font_family
+        logger.info(f"Visualizer 使用字體: {self.font_family}")
         
         # 設置圖表風格
         sns.set_style("whitegrid")
@@ -208,4 +212,4 @@ class Visualizer:
             save_path = os.path.join(self.charts_dir, "strategy_comparison.png")
         
         plt.savefig(save_path, dpi=300)
-        plt.close() 
+        plt.close()

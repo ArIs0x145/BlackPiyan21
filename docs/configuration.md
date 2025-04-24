@@ -26,6 +26,7 @@ BlackPiyan 默認使用 `configs/default.yaml` 作為配置文件。您可以：
   ```bash
   python main.py --config configs/my_config.yaml
   ```
+- 在 GUI 中直接調整參數（無需手動修改配置文件）
 
 ## 配置格式
 
@@ -36,6 +37,24 @@ BlackPiyan 使用 YAML 格式的配置文件，其結構清晰易讀。YAML 是�
 - 使用縮進表示嵌套結構
 - 列表項使用連字符開頭：`- item`
 - 支持字符串、數字、布爾值和複合數據類型
+
+示例：
+```yaml
+# 這是頂層鍵
+top_level:
+  # 這是嵌套鍵
+  nested_key: value
+  # 這是列表
+  list_key:
+    - item1
+    - item2
+  # 這是帶有嵌套結構的列表
+  complex_list:
+    - name: item1
+      value: 10
+    - name: item2
+      value: 20
+```
 
 ## 配置項詳解
 
@@ -56,11 +75,11 @@ game:
 
 ### 莊家配置
 
-`dealer` 部分控制莊家的默認行為。
+`dealer` 部分控制莊家的行為。
 
 | 配置項 | 類型 | 默認值 | 說明 |
 |------|------|-------|------|
-| `hit_until_value` | 整數 | 17 | 莊家的默認補牌策略閾值，小於此值時會繼續補牌 |
+| `hit_until_value` | 整數 | 17 | 莊家的補牌策略值，當手牌點數小於此值時補牌，否則停牌 |
 
 ```yaml
 dealer:
@@ -69,13 +88,13 @@ dealer:
 
 ### 模擬配置
 
-`simulation` 部分控制模擬的執行參數。
+`simulation` 部分控制模擬的運行參數。
 
 | 配置項 | 類型 | 默認值 | 說明 |
 |------|------|-------|------|
 | `min_games_per_strategy` | 整數 | 1000 | 每種策略至少模擬的局數 |
 | `total_min_games` | 整數 | 2000 | 總共至少模擬的局數 |
-| `strategies` | 整數列表 | [16, 17, 18] | 要測試的所有策略值 |
+| `strategies` | 整數列表 | [16, 17, 18] | 要測試的莊家補牌策略值列表 |
 
 ```yaml
 simulation:
@@ -85,6 +104,29 @@ simulation:
     - 16
     - 17
     - 18
+```
+
+#### 實時更新配置
+
+`realtime_update` 是 `simulation` 的子配置，控制實時更新圖表的行為。
+
+| 配置項 | 類型 | 默認值 | 說明 |
+|------|------|-------|------|
+| `enabled` | 布爾值 | true | 是否啟用實時更新 |
+| `update_interval` | 整數 | 100 | 每模擬多少局更新一次圖表 |
+| `min_update_interval` | 整數 | 50 | 最小更新間隔（局數） |
+| `max_update_interval` | 整數 | 500 | 最大更新間隔（局數） |
+| `auto_adjust` | 布爾值 | true | 是否根據總局數自動調整更新間隔 |
+
+```yaml
+simulation:
+  # 其他配置...
+  realtime_update:
+    enabled: true
+    update_interval: 100
+    min_update_interval: 50
+    max_update_interval: 500
+    auto_adjust: true
 ```
 
 ### 日誌配置
@@ -106,12 +148,12 @@ logging:
 
 ### 輸出配置
 
-`output` 部分控制結果輸出的位置。
+`output` 部分控制結果的保存位置。
 
 | 配置項 | 類型 | 默認值 | 說明 |
 |------|------|-------|------|
-| `data_dir` | 字符串 | "results/data" | 結果數據存儲目錄 |
-| `charts_dir` | 字符串 | "results/charts" | 圖表輸出目錄 |
+| `data_dir` | 字符串 | "results/data" | 結果數據保存目錄 |
+| `charts_dir` | 字符串 | "results/charts" | 圖表保存目錄 |
 
 ```yaml
 output:
@@ -161,6 +203,13 @@ simulation:
     - 16
     - 17
     - 18
+  # 實時更新配置
+  realtime_update:
+    enabled: true               # 是否啟用實時更新
+    update_interval: 100        # 每多少局更新一次圖表
+    min_update_interval: 50     # 最小更新間隔 (局數)
+    max_update_interval: 500    # 最大更新間隔 (局數)
+    auto_adjust: true           # 是否根據總局數自動調整更新間隔
 
 # 日誌配置
 logging:
@@ -217,20 +266,25 @@ output:
 
 ### 配置文件未找到
 
-如果出現 "找不到配置文件" 錯誤，請確保：
-- 配置文件路徑正確
-- 在正確的工作目錄下運行程序
+如果遇到「配置文件未找到」錯誤：
+
+- 確認 `configs/default.yaml` 文件存在
+- 如果使用自定義配置，確保路徑正確：
+  ```bash
+  python main.py --config configs/my_config.yaml
+  ```
 
 ### 配置選項無效
 
-如果某個配置選項無效，程序將給出詳細錯誤信息。常見問題包括：
-- 類型錯誤（例如使用字符串而非數字）
-- 範圍錯誤（例如使用負數牌副數量）
-- YAML 格式錯誤（例如縮進不一致）
+如果遇到「配置選項無效」錯誤：
+
+- 檢查 YAML 格式是否正確（縮進、冒號等）
+- 確保所有必需的配置項都存在
+- 確保數值在有效範圍內（如 `reshuffle_threshold` 應在 0.0-1.0 之間）
 
 ### 字體問題
 
 如果圖表中的中文顯示為方框或亂碼，請：
 - 檢查系統中是否安裝了指定的字體
 - 嘗試使用系統已安裝的其他中文字體
-- 參考 [跨平台字體支持](./font_support.md) 文檔 
+- 參考 [跨平台字體支持](./font_support.md) 文檔

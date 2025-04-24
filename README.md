@@ -117,15 +117,29 @@ dealer:
 # 模擬配置
 simulation:
   min_games_per_strategy: 1000  # 每種策略至少模擬的局數
+  total_min_games: 2000         # 總共至少模擬的局數
   strategies:                   # 要測試的所有策略值
     - 16
     - 17
     - 18
+  # 實時更新配置
+  realtime_update:
+    enabled: true               # 是否啟用實時更新
+    update_interval: 100        # 每多少局更新一次圖表
+    min_update_interval: 50     # 最小更新間隔 (局數)
+    max_update_interval: 500    # 最大更新間隔 (局數)
+    auto_adjust: true           # 是否根據總局數自動調整更新間隔
 
-# 字體配置
-font:
-  family: "Microsoft JhengHei"  # 中文顯示字體
-  fallback: "DejaVu Sans"       # 後備字體
+# 日誌配置
+logging:
+  level: INFO                  # 日誌級別 (DEBUG, INFO, WARNING, ERROR)
+  file: logs/blackpiyan.log    # 日誌文件
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+
+# 結果輸出配置
+output:
+  data_dir: results/data        # 結果數據存儲目錄
+  charts_dir: results/charts    # 圖表輸出目錄 
 ```
 
 更多配置說明請參閱 [配置文檔](docs/configuration.md)。
