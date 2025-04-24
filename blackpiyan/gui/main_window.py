@@ -13,11 +13,11 @@ from PySide6.QtCore import Signal, Slot, QThread, QObject
 from PySide6.QtWidgets import QMainWindow, QApplication, QMessageBox, QTableWidgetItem
 
 # 導入生成的UI類
-from gui.ui_main_window import Ui_MainWindow
+from .ui_main_window import Ui_MainWindow
 # 導入Matplotlib嵌入類
-from gui.mpl_canvas import MplCanvas, NavigationToolbar
+from .mpl_canvas import MplCanvas, NavigationToolbar
 # 導入工作線程類
-from gui.worker import SimulationWorker
+from .worker import SimulationWorker
 
 # 導入BlackPiyan核心類
 from blackpiyan.config.config_manager import ConfigManager
