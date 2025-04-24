@@ -22,6 +22,7 @@ from .worker import SimulationWorker
 # 導入BlackPiyan核心類
 from blackpiyan.config.config_manager import ConfigManager
 from blackpiyan.analysis.analyzer import Analyzer
+from blackpiyan.utils.font_manager import FontManager
 
 # --- 日誌處理器 ---
 class QtLogHandler(logging.Handler, QObject):
@@ -56,6 +57,23 @@ class BlackPiyanGUI(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
+        # 加載配置
+        try:
+            self.config_manager = ConfigManager('configs/default.yaml')
+            self.config = self.config_manager.get_config()
+        except Exception as e:
+            QMessageBox.critical(self, "配置加載錯誤", f"無法加載配置文件: {e}")
+            self.config = {'simulation': {'min_games_per_strategy': 1000, 'strategies': [16, 17, 18]},
+                           'game': {'decks': 6, 'reshuffle_threshold': 0.4}}
+
+        # 初始化字體管理器
+        self.font_manager = FontManager()
+        
+        # 設置應用程序字體
+        app = QApplication.instance()
+        if app:
+            app.setFont(self.font_manager.get_qt_font())
+
         # 設置應用程序圖標
         try:
             # 使用絕對路徑獲取圖標
@@ -69,15 +87,6 @@ class BlackPiyanGUI(QMainWindow):
                 logging.warning(f"圖標文件不存在: {icon_path}")
         except Exception as e:
             logging.warning(f"設置應用程序圖標時出錯: {str(e)}")
-
-        # 加載配置
-        try:
-            self.config_manager = ConfigManager('configs/default.yaml')
-            self.config = self.config_manager.get_config()
-        except Exception as e:
-            QMessageBox.critical(self, "配置加載錯誤", f"無法加載配置文件: {e}")
-            self.config = {'simulation': {'min_games_per_strategy': 1000, 'strategies': [16, 17, 18]},
-                           'game': {'decks': 6, 'reshuffle_threshold': 0.4}}
 
         # 初始化UI組件
         self.setup_matplotlib_widgets()
@@ -103,6 +112,9 @@ class BlackPiyanGUI(QMainWindow):
 
     def setup_matplotlib_widgets(self):
         """設置 Matplotlib 圖表控件"""
+        # 配置 Matplotlib 字體
+        self.font_manager.configure_matplotlib()
+        
         # 為分佈圖創建Canvas
         self.dist_canvas = MplCanvas(self.ui.distributionPlotWidget, width=5, height=4, dpi=100)
         dist_layout = QtWidgets.QVBoxLayout()
@@ -867,42 +879,47 @@ class BlackPiyanGUI(QMainWindow):
             
             # 如果工作線程還在運行，嘗試終止它
             if hasattr(self, 'worker_thread') and self.worker_thread:
-                if self.worker_thread.isRunning():
-                    logging.info("工作線程仍在運行，嘗試終止")
-                    try:
-                        # 嘗試安全終止線程
-                        try:
-                            # 先確保停止工作器
-                            if hasattr(self, 'simulator_worker') and self.simulator_worker:
-                                self.simulator_worker.request_stop()
-                            
-                            # 等待一小段時間
-                            time.sleep(0.2)
-                            
-                            # 嘗試正常退出
-                            if self.worker_thread.isRunning():
-                                # 記得使用 deleteLater 而不是直接刪除
-                                self.worker_thread.quit()
-                                # 等待一段時間
-                                successful = self.worker_thread.wait(1000)
-                                
-                                # 如果仍未退出，則嘗試強制終止
-                                if not successful and self.worker_thread.isRunning():
-                                    logging.warning("線程未能通過 quit() 終止，嘗試強制終止")
-                                    self.worker_thread.terminate()
-                                    self.worker_thread.wait(500)
-                        except Exception as e:
-                            logging.error(f"終止線程的標準方法失敗: {str(e)}")
-                            
-                            # 回退方案：使用強制終止
+                try:
+                    # 先檢查 worker_thread 是否是有效的物件，並且未被刪除
+                    if self.worker_thread and not self.worker_thread.parent() is None:
+                        if self.worker_thread.isRunning():
+                            logging.info("工作線程仍在運行，嘗試終止")
+                            # 嘗試安全終止線程
                             try:
-                                if hasattr(self, 'worker_thread') and self.worker_thread and self.worker_thread.isRunning():
-                                    self.worker_thread.terminate()
-                                    self.worker_thread.wait(500)
-                            except:
-                                logging.error("強制終止線程失敗")
-                    except Exception as e:
-                        logging.error(f"終止工作線程時出錯: {str(e)}")
+                                # 先確保停止工作器
+                                if hasattr(self, 'simulator_worker') and self.simulator_worker:
+                                    self.simulator_worker.request_stop()
+                                
+                                # 等待一小段時間
+                                time.sleep(0.2)
+                                
+                                # 嘗試正常退出
+                                if self.worker_thread and not self.worker_thread.parent() is None:
+                                    if self.worker_thread.isRunning():
+                                        # 記得使用 deleteLater 而不是直接刪除
+                                        self.worker_thread.quit()
+                                        # 等待一段時間
+                                        successful = self.worker_thread.wait(1000)
+                                        
+                                        # 如果仍未退出，則嘗試強制終止
+                                        if not successful and self.worker_thread and not self.worker_thread.parent() is None:
+                                            if self.worker_thread.isRunning():
+                                                logging.warning("線程未能通過 quit() 終止，嘗試強制終止")
+                                                self.worker_thread.terminate()
+                                                self.worker_thread.wait(500)
+                            except Exception as e:
+                                logging.error(f"終止線程的標準方法失敗: {str(e)}")
+                                
+                                # 回退方案：使用強制終止
+                                try:
+                                    if hasattr(self, 'worker_thread') and self.worker_thread and not self.worker_thread.parent() is None:
+                                        if self.worker_thread.isRunning():
+                                            self.worker_thread.terminate()
+                                            self.worker_thread.wait(500)
+                                except:
+                                    logging.error("強制終止線程失敗")
+                except Exception as e:
+                    logging.error(f"終止工作線程時出錯: {str(e)}")
                 
                 # 安全地清除線程引用
                 try:
@@ -1095,4 +1112,4 @@ class BlackPiyanGUI(QMainWindow):
         except Exception as e:
             logging.exception(f"更新中間結果圖表時出錯: {str(e)}")
             # 顯示錯誤對話框
-            self.error_occurred.emit("更新圖表錯誤", f"無法更新圖表: {str(e)}\n\n{traceback.format_exc()}") 
+            self.error_occurred.emit("更新圖表錯誤", f"無法更新圖表: {str(e)}\n\n{traceback.format_exc()}")

@@ -6,10 +6,10 @@ import seaborn as sns
 import pandas as pd
 import numpy as np
 import matplotlib as mpl
-import matplotlib.font_manager as fm
 import logging
 
 from blackpiyan.analysis.analyzer import Analyzer
+from blackpiyan.utils.font_manager import FontManager
 
 # 獲取日誌記錄器
 logger = logging.getLogger(__name__)
@@ -28,72 +28,9 @@ class Visualizer:
         self.analyzer = analyzer
         self.config = config or {}
         
-        # 設置字體配置
-        font_config = self.config.get('font', {})
-        config_font = font_config.get('family', '')
-        font_fallback = font_config.get('fallback', 'DejaVu Sans')
-        
-        # 根據不同作業系統準備字體回退列表
-        system = platform.system()
-        if system == 'Windows':
-            system_fonts = ['Microsoft JhengHei', 'Microsoft YaHei', 'SimHei', 'SimSun']
-        elif system == 'Darwin':  # macOS
-            system_fonts = ['PingFang TC', 'PingFang SC', 'Heiti TC', 'Apple LiGothic', 'Hiragino Sans GB']
-        else:  # Linux或其他
-            system_fonts = ['Noto Sans CJK TC', 'Noto Sans CJK SC', 'WenQuanYi Micro Hei', 'Droid Sans Fallback']
-        
-        # 組合字體優先級列表 (配置字體 -> 系統字體 -> 後備字體 -> 通用字體)
-        font_priority = []
-        if config_font:
-            font_priority.append(config_font)
-        font_priority.extend(system_fonts)
-        font_priority.append(font_fallback)
-        font_priority.append('sans-serif')
-        
-        # 獲取系統中所有可用字體
-        available_fonts = set([f.name for f in fm.fontManager.ttflist])
-        
-        # 檢查中文字體可用性
-        chinese_fonts = [f for f in available_fonts if any(
-            name in f for name in ['Chinese', 'Microsoft', 'Micro', 'SimSun', 'SimHei', 'PingFang', 
-                                  'WenQuanYi', 'Noto', 'Heiti', 'Hiragino']
-        )]
-        
-        # 找到第一個可用的字體
-        self.font_family = None
-        for font in font_priority:
-            if font in available_fonts:
-                self.font_family = font
-                break
-        
-        # 如果沒有找到任何指定字體，但有其他中文字體，使用第一個可用的中文字體
-        if not self.font_family and chinese_fonts:
-            self.font_family = chinese_fonts[0]
-            logger.warning(f"找不到配置的字體，使用備用中文字體: {self.font_family}")
-        elif not self.font_family:
-            self.font_family = 'sans-serif'
-            logger.warning("警告: 找不到任何中文字體，圖表中的中文可能無法正確顯示")
-        else:
-            logger.info(f"使用字體: {self.font_family}")
-            
-        # 記錄字體信息
-        logger.debug(f"當前作業系統: {system}")
-        logger.debug(f"配置的字體: {config_font}")
-        logger.debug(f"可用的中文字體: {chinese_fonts}")
-        logger.debug(f"最終選擇的字體: {self.font_family}")
-        
-        # 全局配置matplotlib字體
-        plt.rcParams['font.family'] = [self.font_family, 'sans-serif']
-        plt.rcParams['axes.unicode_minus'] = False  # 正確顯示負號
-        
-        # 將選擇的字體設為sans-serif字體族的第一選擇
-        font_list = plt.rcParams.get('font.sans-serif', [])
-        if self.font_family not in font_list:
-            font_list.insert(0, self.font_family)
-            plt.rcParams['font.sans-serif'] = font_list
-        
-        # 創建字體屬性對象，用於設置所有文字元素
-        self.font_prop = fm.FontProperties(family=self.font_family)
+        # 初始化字體管理器
+        self.font_manager = FontManager()
+        self.font_manager.configure_matplotlib()
         
         # 設置圖表風格
         sns.set_style("whitegrid")
@@ -138,9 +75,9 @@ class Visualizer:
         
         # 添加標題和標籤
         plt.title(f"莊家點數分布 (補到 {strategy} 點停牌，爆牌率: {bust_rate:.2f}%)", 
-                 fontsize=16, fontproperties=self.font_prop)
-        plt.xlabel("手牌點數", fontsize=14, fontproperties=self.font_prop)
-        plt.ylabel("局數", fontsize=14, fontproperties=self.font_prop)
+                 fontsize=16, fontproperties=self.font_manager.get_font_properties(16))
+        plt.xlabel("手牌點數", fontsize=14, fontproperties=self.font_manager.get_font_properties(14))
+        plt.ylabel("局數", fontsize=14, fontproperties=self.font_manager.get_font_properties(14))
         
         # 為每個柱添加數字標籤
         for p in ax.patches:
@@ -163,7 +100,7 @@ class Visualizer:
                    label=f"平均值: {mean_value:.2f}")
         
         # 設置圖例字體
-        plt.legend(prop=self.font_prop)
+        plt.legend(prop=self.font_manager.get_font_properties())
         plt.tight_layout()
         
         # 保存圖表
@@ -188,9 +125,9 @@ class Visualizer:
         
         # 爆牌率比較
         sns.barplot(x='strategy', y='bust_rate', data=comparison_df, ax=axes[0, 0])
-        axes[0, 0].set_title("不同策略的爆牌率比較", fontsize=16, fontproperties=self.font_prop)
-        axes[0, 0].set_xlabel("策略 (補到X點停牌)", fontsize=14, fontproperties=self.font_prop)
-        axes[0, 0].set_ylabel("爆牌率", fontsize=14, fontproperties=self.font_prop)
+        axes[0, 0].set_title("不同策略的爆牌率比較", fontsize=16, fontproperties=self.font_manager.get_font_properties(16))
+        axes[0, 0].set_xlabel("策略 (補到X點停牌)", fontsize=14, fontproperties=self.font_manager.get_font_properties(14))
+        axes[0, 0].set_ylabel("爆牌率", fontsize=14, fontproperties=self.font_manager.get_font_properties(14))
         
         # 為每個柱添加百分比標籤
         for p in axes[0, 0].patches:
@@ -202,9 +139,9 @@ class Visualizer:
         
         # 平均點數比較
         sns.barplot(x='strategy', y='mean_value', data=comparison_df, ax=axes[0, 1])
-        axes[0, 1].set_title("不同策略的平均點數比較", fontsize=16, fontproperties=self.font_prop)
-        axes[0, 1].set_xlabel("策略 (補到X點停牌)", fontsize=14, fontproperties=self.font_prop)
-        axes[0, 1].set_ylabel("平均點數", fontsize=14, fontproperties=self.font_prop)
+        axes[0, 1].set_title("不同策略的平均點數比較", fontsize=16, fontproperties=self.font_manager.get_font_properties(16))
+        axes[0, 1].set_xlabel("策略 (補到X點停牌)", fontsize=14, fontproperties=self.font_manager.get_font_properties(14))
+        axes[0, 1].set_ylabel("平均點數", fontsize=14, fontproperties=self.font_manager.get_font_properties(14))
         
         # 為每個柱添加數值標籤
         for p in axes[0, 1].patches:
@@ -241,20 +178,20 @@ class Visualizer:
             ax=axes[1, 0]
         )
         
-        axes[1, 0].set_title("不同策略的點數分布比較 (16-26點)", fontsize=16, fontproperties=self.font_prop)
-        axes[1, 0].set_xlabel("手牌點數", fontsize=14, fontproperties=self.font_prop)
-        axes[1, 0].set_ylabel("局數", fontsize=14, fontproperties=self.font_prop)
+        axes[1, 0].set_title("不同策略的點數分布比較 (16-26點)", fontsize=16, fontproperties=self.font_manager.get_font_properties(16))
+        axes[1, 0].set_xlabel("手牌點數", fontsize=14, fontproperties=self.font_manager.get_font_properties(14))
+        axes[1, 0].set_ylabel("局數", fontsize=14, fontproperties=self.font_manager.get_font_properties(14))
         
         # 設置圖例字體
         legend = axes[1, 0].legend(title="策略")
-        plt.setp(legend.get_title(), fontproperties=self.font_prop)
-        plt.setp(legend.get_texts(), fontproperties=self.font_prop)
+        plt.setp(legend.get_title(), fontproperties=self.font_manager.get_font_properties())
+        plt.setp(legend.get_texts(), fontproperties=self.font_manager.get_font_properties())
         
         # 標準差比較
         sns.barplot(x='strategy', y='std_dev', data=comparison_df, ax=axes[1, 1])
-        axes[1, 1].set_title("不同策略的點數標準差比較", fontsize=16, fontproperties=self.font_prop)
-        axes[1, 1].set_xlabel("策略 (補到X點停牌)", fontsize=14, fontproperties=self.font_prop)
-        axes[1, 1].set_ylabel("標準差", fontsize=14, fontproperties=self.font_prop)
+        axes[1, 1].set_title("不同策略的點數標準差比較", fontsize=16, fontproperties=self.font_manager.get_font_properties(16))
+        axes[1, 1].set_xlabel("策略 (補到X點停牌)", fontsize=14, fontproperties=self.font_manager.get_font_properties(14))
+        axes[1, 1].set_ylabel("標準差", fontsize=14, fontproperties=self.font_manager.get_font_properties(14))
         
         # 為每個柱添加數值標籤
         for p in axes[1, 1].patches:
