@@ -8,6 +8,8 @@ from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qtagg import NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
 
+from blackpiyan.utils.font_manager import FontManager
+
 class MplCanvas(FigureCanvas):
     """Matplotlib 畫布類，用於在 PySide6 控件中嵌入 Matplotlib 圖表"""
     
@@ -33,10 +35,9 @@ class MplCanvas(FigureCanvas):
                                   QtWidgets.QSizePolicy.Policy.Expanding)
         FigureCanvas.updateGeometry(self)
         
-        # 為中文顯示設置默認字體
-        import matplotlib.pyplot as plt
-        plt.rcParams['font.sans-serif'] = ['Microsoft JhengHei', 'DejaVu Sans', 'Arial']
-        plt.rcParams['axes.unicode_minus'] = False  # 解決負號顯示問題 
+        # 初始化字體管理器並配置字體
+        self.font_manager = FontManager()
+        self.font_manager.configure_matplotlib()
 
     def draw(self):
         """
@@ -54,7 +55,8 @@ class MplCanvas(FigureCanvas):
                 self.axes.text(0.5, 0.5, f"渲染錯誤: {error_msg}",
                              horizontalalignment='center',
                              verticalalignment='center',
-                             fontsize=10, color='red')
+                             fontsize=10, color='red',
+                             fontproperties=self.font_manager.get_font_properties())
                 super().draw()
             except Exception as inner_error:
                 # 如果連錯誤顯示都失敗，只能記錄日誌
