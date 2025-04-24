@@ -879,42 +879,47 @@ class BlackPiyanGUI(QMainWindow):
             
             # 如果工作線程還在運行，嘗試終止它
             if hasattr(self, 'worker_thread') and self.worker_thread:
-                if self.worker_thread.isRunning():
-                    logging.info("工作線程仍在運行，嘗試終止")
-                    try:
-                        # 嘗試安全終止線程
-                        try:
-                            # 先確保停止工作器
-                            if hasattr(self, 'simulator_worker') and self.simulator_worker:
-                                self.simulator_worker.request_stop()
-                            
-                            # 等待一小段時間
-                            time.sleep(0.2)
-                            
-                            # 嘗試正常退出
-                            if self.worker_thread.isRunning():
-                                # 記得使用 deleteLater 而不是直接刪除
-                                self.worker_thread.quit()
-                                # 等待一段時間
-                                successful = self.worker_thread.wait(1000)
-                                
-                                # 如果仍未退出，則嘗試強制終止
-                                if not successful and self.worker_thread.isRunning():
-                                    logging.warning("線程未能通過 quit() 終止，嘗試強制終止")
-                                    self.worker_thread.terminate()
-                                    self.worker_thread.wait(500)
-                        except Exception as e:
-                            logging.error(f"終止線程的標準方法失敗: {str(e)}")
-                            
-                            # 回退方案：使用強制終止
+                try:
+                    # 先檢查 worker_thread 是否是有效的物件，並且未被刪除
+                    if self.worker_thread and not self.worker_thread.parent() is None:
+                        if self.worker_thread.isRunning():
+                            logging.info("工作線程仍在運行，嘗試終止")
+                            # 嘗試安全終止線程
                             try:
-                                if hasattr(self, 'worker_thread') and self.worker_thread and self.worker_thread.isRunning():
-                                    self.worker_thread.terminate()
-                                    self.worker_thread.wait(500)
-                            except:
-                                logging.error("強制終止線程失敗")
-                    except Exception as e:
-                        logging.error(f"終止工作線程時出錯: {str(e)}")
+                                # 先確保停止工作器
+                                if hasattr(self, 'simulator_worker') and self.simulator_worker:
+                                    self.simulator_worker.request_stop()
+                                
+                                # 等待一小段時間
+                                time.sleep(0.2)
+                                
+                                # 嘗試正常退出
+                                if self.worker_thread and not self.worker_thread.parent() is None:
+                                    if self.worker_thread.isRunning():
+                                        # 記得使用 deleteLater 而不是直接刪除
+                                        self.worker_thread.quit()
+                                        # 等待一段時間
+                                        successful = self.worker_thread.wait(1000)
+                                        
+                                        # 如果仍未退出，則嘗試強制終止
+                                        if not successful and self.worker_thread and not self.worker_thread.parent() is None:
+                                            if self.worker_thread.isRunning():
+                                                logging.warning("線程未能通過 quit() 終止，嘗試強制終止")
+                                                self.worker_thread.terminate()
+                                                self.worker_thread.wait(500)
+                            except Exception as e:
+                                logging.error(f"終止線程的標準方法失敗: {str(e)}")
+                                
+                                # 回退方案：使用強制終止
+                                try:
+                                    if hasattr(self, 'worker_thread') and self.worker_thread and not self.worker_thread.parent() is None:
+                                        if self.worker_thread.isRunning():
+                                            self.worker_thread.terminate()
+                                            self.worker_thread.wait(500)
+                                except:
+                                    logging.error("強制終止線程失敗")
+                except Exception as e:
+                    logging.error(f"終止工作線程時出錯: {str(e)}")
                 
                 # 安全地清除線程引用
                 try:
@@ -1107,4 +1112,4 @@ class BlackPiyanGUI(QMainWindow):
         except Exception as e:
             logging.exception(f"更新中間結果圖表時出錯: {str(e)}")
             # 顯示錯誤對話框
-            self.error_occurred.emit("更新圖表錯誤", f"無法更新圖表: {str(e)}\n\n{traceback.format_exc()}") 
+            self.error_occurred.emit("更新圖表錯誤", f"無法更新圖表: {str(e)}\n\n{traceback.format_exc()}")
