@@ -27,7 +27,8 @@ def setup_windows_taskbar_icon():
         print(f"設置 Windows 任務欄圖標時出錯: {str(e)}")
     return False
 
-if __name__ == "__main__":
+def main():
+    """啟動 BlackPiyan GUI 的主函數，提供給 entry_point 使用"""
     # 為 Windows 設置任務欄圖標
     setup_windows_taskbar_icon()
     
@@ -55,4 +56,7 @@ if __name__ == "__main__":
     window.show()
     
     # 進入事件循環 (在 PySide6 中是 exec() 而非 exec_())
-    sys.exit(app.exec()) 
+    return app.exec()
+
+if __name__ == "__main__":
+    sys.exit(main()) 

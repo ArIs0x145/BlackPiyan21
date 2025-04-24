@@ -14,7 +14,7 @@ setup(
     description="模擬21點遊戲中莊家補牌策略的工具",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/CornHub114514/BlackPiyan",
+    url="https://github.com/ArIs0x145/BlackPiyan21",
     packages=find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
@@ -25,7 +25,7 @@ setup(
     install_requires=requirements,
     entry_points={
         "console_scripts": [
-            "blackpiyan=blackpiyan.__main__:main",
+            "blackpiyan=run_gui:main",
         ],
     },
 ) 
