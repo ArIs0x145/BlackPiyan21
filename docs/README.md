@@ -14,7 +14,7 @@
 ### 進階功能
 
 - [跨平台字體支持](./font_support.md) - 如何在不同作業系統上正確顯示中文字體
-- [數據分析指南](./analysis.md) - 分析結果解讀和進階使用方法
+- [數據分析指南](./data_analysis.md) - 分析結果解讀和進階使用方法
 - [可視化圖表說明](./visualization.md) - 各種圖表的含義和自定義方法
 
 ### 開發者文檔
@@ -45,8 +45,8 @@
 | 如何安裝所需依賴？ | [安裝指南](./installation.md) |
 | 如何設置模擬參數？ | [配置說明](./configuration.md) |
 | 中文顯示為方框或亂碼 | [跨平台字體支持](./font_support.md) |
-| 如何解讀模擬結果？ | [數據分析指南](./analysis.md) |
-| 如何自定義圖表樣式？ | [可視化圖表說明](./visualization.md) |
+| 如何解讀模擬結果？ | [使用指南](./usage.md#結果解讀) |
+| 如何自定義圖表樣式？ | [配置說明](./configuration.md#字體配置) |
 | 如何使用 API 擴展功能？ | [API 參考](./api_reference.md) |
 | 程序運行錯誤 | [故障排除](./troubleshooting.md) |
 
@@ -54,4 +54,4 @@
 
 - 版本：1.0.0
 - 最後更新：2025-04-24
-- 適用於 BlackPiyan v1.0.0 及以上版本 
+- 適用於 BlackPiyan v1.0.0 及以上版本

@@ -18,6 +18,7 @@
    - [Analyzer](#analyzer)
 5. [可視化](#可視化)
    - [Visualizer](#visualizer)
+6. [使用示例](#使用示例)
 
 ---
 
@@ -55,6 +56,8 @@ def validate_config(self) -> bool
 
 **返回**:
 - 配置有效時返回 True，否則拋出異常
+
+---
 
 ### Logger
 
@@ -134,6 +137,8 @@ def get_dealer_strategy(self) -> int
 **返回**:
 - 莊家的補牌策略閾值
 
+---
+
 ### Card
 
 `blackpiyan.model.card.Card`
@@ -160,6 +165,25 @@ def blackjack_value(self) -> int
 
 **返回**:
 - 21 點遊戲中的點數值
+
+```python
+@property
+def display_value(self) -> str
+```
+返回這張牌的顯示值（A、J、Q、K 等）。
+
+**返回**:
+- 牌的顯示值
+
+```python
+def __str__(self) -> str
+```
+返回牌的字符串表示，例如 "♥A"。
+
+**返回**:
+- 牌的字符串表示
+
+---
 
 ### Deck
 
@@ -209,6 +233,8 @@ def auto_shuffle_if_needed(self, threshold: float) -> bool
 
 **返回**:
 - 是否執行了洗牌操作
+
+---
 
 ### Dealer
 
@@ -312,25 +338,33 @@ def __init__(self, config: Dict[str, Any])
 #### 方法
 
 ```python
-def run_single_strategy(self, strategy: int, min_games: int) -> List[Dict[str, Any]]
+def run_strategy(self, strategy: int, num_games: int) -> List[Dict[str, Any]]
 ```
-模擬指定策略的多局遊戲。
+運行單一策略的模擬。
 
 **參數**:
-- `strategy`: 莊家補牌策略閾值
-- `min_games`: 最少模擬局數
+- `strategy`: 莊家策略值
+- `num_games`: 模擬局數
 
 **返回**:
-- 包含每局遊戲結果的列表
+- 包含遊戲結果的列表
 
 ```python
 def run_multiple_strategies(self, strategies: List[int], min_games_per_strategy: int) -> Dict[int, List[Dict[str, Any]]]
 ```
-模擬多種策略，每種策略多局遊戲。
+運行多策略模擬。
 
 **參數**:
-- `strategies`: 策略列表
+- `strategies`: 策略值列表
 - `min_games_per_strategy`: 每種策略的最少模擬局數
+
+**返回**:
+- 以策略值為鍵，遊戲結果列表為值的字典
+
+```python
+def run_simulation(self) -> Dict[int, List[Dict[str, Any]]]
+```
+根據配置運行完整模擬。
 
 **返回**:
 - 以策略值為鍵，遊戲結果列表為值的字典
@@ -379,12 +413,20 @@ def get_distribution(self, strategy: int) -> Dict[int, int]
 - 以點數為鍵，次數為值的字典
 
 ```python
-def compare_strategies(self) -> pd.DataFrame
+def compare_strategies(self) -> Dict[str, Dict[int, float]]
 ```
 比較不同策略的表現。
 
 **返回**:
-- 包含各策略統計數據的 DataFrame
+- 包含不同指標的比較結果的字典
+
+```python
+def get_all_strategies(self) -> List[int]
+```
+獲取所有策略值。
+
+**返回**:
+- 策略值列表
 
 ---
 
@@ -476,4 +518,4 @@ results = simulator.run_multiple_strategies(custom_strategies, 2000)
 analyzer = Analyzer(results)
 visualizer = Visualizer(analyzer, config)
 visualizer.plot_comparison()
-``` 
+```

@@ -77,8 +77,8 @@ sudo pacman -S python python-pip
 
 ```bash
 # 克隆倉庫
-git clone https://github.com/yourusername/blackpiyan.git
-cd blackpiyan
+git clone https://github.com/ArIs0x145/BlackPiyan.git
+cd BlackPiyan
 
 # 創建並激活虛擬環境 (推薦)
 python -m venv .venv
@@ -91,7 +91,7 @@ source .venv/bin/activate  # macOS/Linux
 
 ### 方法二：下載發布包
 
-1. 訪問 [GitHub Releases 頁面](https://github.com/yourusername/blackpiyan/releases)
+1. 訪問 [GitHub Releases 頁面](https://github.com/ArIs0x145/BlackPiyan/releases)
 2. 下載最新版本的發布包 (.zip 或 .tar.gz)
 3. 解壓文件到您想要的位置
 4. 進入解壓後的目錄
@@ -111,6 +111,7 @@ pip install -r requirements.txt
 - **pandas**：用於數據分析
 - **seaborn**：用於高級可視化
 - **pyyaml**：用於解析配置文件
+- **PySide6**：用於圖形用戶界面 (GUI)
 
 ## 字體安裝
 
@@ -140,6 +141,12 @@ python main.py
 ```
 
 如果安裝成功，程序將執行，並在控制台顯示進度信息，最後在 `results/charts/` 目錄下生成可視化圖表。
+
+若要測試 GUI 界面：
+
+```bash
+python run_gui.py
+```
 
 ## 常見安裝問題
 
@@ -182,6 +189,18 @@ python main.py
   chmod +x .venv/bin/activate
   ```
 
+### 問題：GUI運行時出現PySide6相關錯誤
+
+**解決方案**：
+- 確保已安裝PySide6：
+  ```bash
+  pip install PySide6
+  ```
+- 如果遇到版本兼容問題，嘗試安裝特定版本：
+  ```bash
+  pip install PySide6==6.4.2
+  ```
+
 ---
 
-如果您在安裝過程中遇到其他問題，請查閱[故障排除](./troubleshooting.md)文檔，或在 GitHub 項目頁面提交 Issue。 
+如果您在安裝過程中遇到其他問題，請查閱[故障排除](./troubleshooting.md)文檔，或在 [GitHub 項目頁面](https://github.com/ArIs0x145/BlackPiyan/issues)提交 Issue。
