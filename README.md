@@ -1,6 +1,4 @@
 <div align="center">
-  <!-- 如需添加Logo，請將下面這行取消注釋並指向您的Logo圖片 -->
-  <!-- <img src="docs/images/logo.png" alt="BlackPiyan Logo" width="200"/> -->
   <h1>BlackPiyan</h1>
   <p>專業的21點(Blackjack)莊家策略模擬與分析工具</p>
   
