@@ -180,14 +180,14 @@ BlackPiyan 提供了完整的測試套件：
 
 ```bash
 # 運行所有測試
-python -m unittest discover tests
+python -m unittest discover blackpiyan.tests
 
 # 運行特定測試模塊
-python -m unittest tests.test_model
-python -m unittest tests.test_simulation
+python -m unittest blackpiyan.tests.test_model
+python -m unittest blackpiyan.tests.test_simulation
 
 # 運行單個測試類
-python -m unittest tests.test_model.TestCard
+python -m unittest blackpiyan.tests.test_model.TestCard
 ```
 
 ## 🤝 貢獻指南
