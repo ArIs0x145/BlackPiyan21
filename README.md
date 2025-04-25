@@ -137,7 +137,12 @@ logging:
 # 結果輸出配置
 output:
   data_dir: results/data        # 結果數據存儲目錄
-  charts_dir: results/charts    # 圖表輸出目錄 
+  charts_dir: results/charts    # 圖表輸出目錄
+
+# 字體配置
+font:
+  family: "Microsoft JhengHei"  # 中文顯示字體
+  fallback: "DejaVu Sans"       # 後備字體 
 ```
 
 更多配置說明請參閱 [配置文檔](docs/configuration.md)。
