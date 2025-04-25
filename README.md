@@ -168,8 +168,8 @@ blackpiyan/             # 主程式碼目錄
 ├── utils/              # 實用工具
 ├── visualization/      # 可視化模塊
 ├── gui/                # GUI模塊
-├── docs/               # 文檔目錄
 └── tests/              # 測試目錄
+docs/                   # 文檔目錄
 configs/                # 配置文件目錄
 results/                # 結果輸出目錄
 ```
