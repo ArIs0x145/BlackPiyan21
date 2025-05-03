@@ -200,14 +200,6 @@ python -m unittest blackpiyan.tests.test_simulation
 python -m unittest blackpiyan.tests.test_model.TestCard
 ```
 
-## 🤝 貢獻指南
-
-歡迎任何形式的貢獻！如果您想為 BlackPiyan 做出貢獻，請參閱我們的 [貢獻指南](docs/contributing.md)。
-
-## 📄 許可證
-
-本項目採用 MIT 許可證 - 詳情請參閱 [LICENSE](LICENSE) 文件。
-
 ## 👥 開發團隊
 
 BlackPiyan Team 
